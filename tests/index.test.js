@@ -133,8 +133,6 @@ describe("User metadata endpoint", () => {
         },
       }
     );
-    console.log("avatarresponse is " + avatarResponse.data.avatarId);
-
     avatarId = avatarResponse.data.avatarId;
   });
 
@@ -198,7 +196,6 @@ describe("User avatar information", () => {
 
     userId = signupResponse.data.userId;
 
-    console.log("userid is " + userId);
     const response = await axios.post(`${BACKEND_URL}/api/v1/signin`, {
       username,
       password,
@@ -224,12 +221,9 @@ describe("User avatar information", () => {
   });
 
   test("Get back avatar information for a user", async () => {
-    console.log("asking for user with id " + userId);
     const response = await axios.get(
       `${BACKEND_URL}/api/v1/user/metadata/bulk?ids=[${userId}]`
     );
-    console.log("response was " + userId);
-    console.log(JSON.stringify(response.data));
     expect(response.data.avatars.length).toBe(1);
     expect(response.data.avatars[0].userId).toBe(userId);
   });
@@ -324,8 +318,6 @@ describe("Space information", () => {
     );
     element1Id = element1Response.data.id;
     element2Id = element2Response.data.id;
-    console.log(element2Id);
-    console.log(element1Id);
     const mapResponse = await axios.post(
       `${BACKEND_URL}/api/v1/admin/map`,
       {
@@ -356,9 +348,6 @@ describe("Space information", () => {
         },
       }
     );
-    console.log("mapResponse.status");
-    console.log(mapResponse.data.id);
-
     mapId = mapResponse.data.id;
   });
 
@@ -500,8 +489,6 @@ describe("Space information", () => {
         },
       }
     );
-    console.log("jhflksdjflksdfjlksdfj");
-    console.log(spaceCreateReponse.data);
     const response = await axios.get(`${BACKEND_URL}/api/v1/space/all`, {
       headers: {
         authorization: `Bearer ${adminToken}`,
@@ -644,7 +631,6 @@ describe("Arena endpoints", () => {
         },
       }
     );
-    console.log(spaceResponse.data);
     spaceId = spaceResponse.data.spaceId;
   });
 
@@ -663,7 +649,6 @@ describe("Arena endpoints", () => {
         authorization: `Bearer ${userToken}`,
       },
     });
-    console.log(response.data);
     expect(response.data.dimensions).toBe("100x200");
     expect(response.data.elements.length).toBe(3);
   });
@@ -675,7 +660,6 @@ describe("Arena endpoints", () => {
       },
     });
 
-    console.log(response.data.elements[0].id);
     let res = await axios.delete(`${BACKEND_URL}/api/v1/space/element`, {
       data: { id: response.data.elements[0].id },
       headers: {
@@ -995,9 +979,6 @@ describe("Websocket tests", () => {
 
     adminUserId = adminSignupResponse.data.userId;
     adminToken = adminSigninResponse.data.token;
-    console.log("adminSignupResponse.status");
-    console.log(adminSignupResponse.status);
-
     const userSignupResponse = await axios.post(
       `${BACKEND_URL}/api/v1/signup`,
       {
@@ -1015,7 +996,6 @@ describe("Websocket tests", () => {
     );
     userId = userSignupResponse.data.userId;
     userToken = userSigninResponse.data.token;
-    console.log("useroktne", userToken);
     const element1Response = await axios.post(
       `${BACKEND_URL}/api/v1/admin/element`,
       {
@@ -1096,16 +1076,12 @@ describe("Websocket tests", () => {
       }
     );
 
-    console.log(spaceResponse.status);
     spaceId = spaceResponse.data.spaceId;
   }
   async function setupWs() {
     ws1 = new WebSocket(WS_URL);
 
     ws1.onmessage = (event) => {
-      console.log("got back adata 1");
-      console.log(event.data);
-
       ws1Messages.push(JSON.parse(event.data));
     };
     await new Promise((r) => {
@@ -1115,8 +1091,6 @@ describe("Websocket tests", () => {
     ws2 = new WebSocket(WS_URL);
 
     ws2.onmessage = (event) => {
-      console.log("got back data 2");
-      console.log(event.data);
       ws2Messages.push(JSON.parse(event.data));
     };
     await new Promise((r) => {
@@ -1130,7 +1104,6 @@ describe("Websocket tests", () => {
   });
 
   test("Get back ack for joining the space", async () => {
-    console.log("insixce first test");
     ws1.send(
       JSON.stringify({
         type: "join",
@@ -1140,9 +1113,7 @@ describe("Websocket tests", () => {
         },
       })
     );
-    console.log("insixce first test1");
     const message1 = await waitForAndPopLatestMessage(ws1Messages);
-    console.log("insixce first test2");
     ws2.send(
       JSON.stringify({
         type: "join",
@@ -1152,8 +1123,6 @@ describe("Websocket tests", () => {
         },
       })
     );
-    console.log("insixce first test3");
-
     const message2 = await waitForAndPopLatestMessage(ws2Messages);
     const message3 = await waitForAndPopLatestMessage(ws1Messages);
 
